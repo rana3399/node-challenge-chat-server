@@ -93,7 +93,6 @@ const deleteMessageById=(req, res)=>{
 // -----------------"Read" Functionality--------------
 const getSearchFunc = (req, res)=>{
   const value = req.query.text
-  console.log('THIS IS THE Value ' + value);
 
   let messageText = messages.filter((message) =>  message.text)
 
@@ -106,6 +105,7 @@ const getSearchFunc = (req, res)=>{
 }
 
 app.get("/search", getSearchFunc)
+// ---------------------------------------------------------
 
 
 app.get("/", function (request, response) {
