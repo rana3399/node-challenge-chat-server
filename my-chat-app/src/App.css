@@ -1,3 +1,9 @@
+.message-container{
+  border: #61dafb solid 2px;
+  margin-top: 10px;
+}
+
+
 .App {
   text-align: center;
 }

@@ -37,14 +37,17 @@ const getNewMessages = (req, res)=>{
         messages.push({
           id: incrementId,
           from: from,
-          text: text
+          text: text,
+          time : new Date().toLocaleTimeString()
         })
-  
-        //console.log(messages);
+
         return res.status(201).send(messages[messages.length - 1])
   
       }
+
+     
 }
+
 
 // ----------GET ALL MESSAGE--------------
 const getAllMessages = (req, res)=>{
@@ -89,16 +92,27 @@ const deleteMessageById=(req, res)=>{
 
 }
 
+const getLatestMessage =(req, res)=>{
+
+    const latest =  messages.slice(-1)
+    console.log(latest);
+     return res.send(latest)
+
+
+
+}
+
 
 // -----------------"Read" Functionality--------------
 const getSearchFunc = (req, res)=>{
   const value = req.query.text
+  console.log(value);
 
-  let messageText = messages.filter((message) =>  message.text)
+  let messageText = messages.filter((message) =>  message.text.includes(value))
 
-   if(messageText.includes("express")){
+   if(messageText){
      console.log('----------' +  messageText);
-     return res.send(message)
+     return res.send(messageText)
    }else{
      return res.status(400).send( "Could not find")
    }
@@ -115,6 +129,7 @@ app.get("/", function (request, response) {
 app.post("/message", getNewMessages)
 app.get("/all-message", getAllMessages)
 app.get("/message/:id", getMessageById)
+app.get("/latest", getLatestMessage)
 app.delete("/message/:id", deleteMessageById)
 
 
