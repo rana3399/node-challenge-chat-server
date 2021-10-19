@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs")
 const allMessagesFromJson = require("./all-messages.json");
-//const { parse } = require("path");
 
 const app = express();
 
@@ -11,33 +10,16 @@ app.use(express.json());
 
 const globalMessagesFile = "./all-messages.json"
 
-const welcomeMessage = {
-  id: 0,
-  from: "Bart",
-  text: "Welcome to CYF chat system express!",
-};
-
-const messages = [welcomeMessage]
-
-// get All the messages from JSON file OnLoad
-// get the latest messages whe button is clicked.
-
-
-
-
 // ----------POST--------------
 
 const saveNewMessagesToJson = (jsonText)=>{
   const text = JSON.stringify(jsonText, null, 4)
   fs.writeFileSync(globalMessagesFile, text)
-
 }
 
 const getNewMessagesFromJson =()=>{
   const read = fs.readFileSync(globalMessagesFile)
-  const obj =  JSON.parse( read)
-
-console.log(obj);
+  const obj =  JSON.parse(read)
   return obj;
 }
 
@@ -46,43 +28,31 @@ const messageContent = getNewMessagesFromJson();
 const saveMessage = (req, res )=>{
   const newMessage = req.body
 
-  console.log('this the message body ' + req.body);
-  const allMessages = getNewMessagesFromJson() //  ??
+
+  let maxId = Math.max(...messageContent.map((message) => message.id))
+
+  let incrementId = maxId + 1
 
 
-  allMessages.push(newMessage)
-  saveNewMessagesToJson(allMessages)
-  console.log( allMessages);
-  res.status(201).send(newMessage)
+  const {id, from, text }  = newMessage;
+
+
+  messageContent.push({
+    id: incrementId,
+    from: from,
+    text: text
+  })
+  saveNewMessagesToJson(messageContent)
+  //console.log( messageContent);
+  
+  res.status(201).send({
+    id: incrementId,
+    from: from,
+    text: text,
+    Time: new Date().toLocaleTimeString()
+  })
 
 }
-
-
-// const getNewMessages = (req, res)=>{
-//   const inputMessage = req.body
-//   const {id, from, text} = inputMessage;
-
-  
-//     const maxId = Math.max(...messages.map((message) => message.id))
-//     const incrementId  = maxId + 1;
-  
-
-//       if(from == "" || text == ""){
-//         return res.status(400).send("Please fill all the sections")
-//       }else{
-//         messages.push({
-//           id: incrementId,
-//           from: from,
-//           text: text,
-//           time : new Date().toLocaleTimeString()
-//         })
-
-//         return res.status(201).send(messages[messages.length - 1])
-  
-//       }
-
-     
-// }
 
 
 // ----------GET ALL MESSAGE--------------
@@ -110,18 +80,14 @@ const deleteMessageById=(req, res)=>{
   const reqId = parseInt( req.params.id)
   
   const findMatchedId = (message)=> {
-    console.log( message.id);
    return  message.id === reqId
   } 
 
 
   const indexOfId =  messageContent.findIndex(findMatchedId)
 
-  console.log(indexOfId);
-
   messageContent.splice(indexOfId, 1)
-  console.log('deleted message ID IS: ' + reqId);
-  
+
   saveNewMessagesToJson(messageContent)
   
   return res.send(messageContent)
@@ -131,8 +97,35 @@ const deleteMessageById=(req, res)=>{
 const getLatestMessage =(req, res)=>{
 
     const latestMessage =  messageContent.slice(-1)
-    console.log(latestMessage);
+    //console.log(latestMessage);
      return res.send(latestMessage)
+}
+
+// --------PUT--------------------
+
+const updateMessage=(req, res)=>{
+  const reqId = parseInt(req.params.id)
+  console.log(parseInt(req.params.id));
+
+  //const newInputMessage = req.body
+  //console.log(req.body);
+
+  const found = messageContent.find((message) => message.id == reqId) 
+  console.log(found);
+
+  let {id, from, text } = found
+
+  id = req.body.id,
+  from = req.body.from,
+  text = req.body.text
+  
+  saveNewMessagesToJson(found)
+
+  res.send({
+    id: reqId,
+    from: req.body.from,
+    text: req.body.text
+  })
 }
 
 // -----------------"Read" Functionality--------------
@@ -140,10 +133,10 @@ const getSearchFunc = (req, res)=>{
   const value = req.query.text
   console.log(value);
 
-  let messageText = messages.filter((message) =>  message.text.includes(value))
+  let messageText = messageContent.filter((message) =>  message.text.includes(value))
 
    if(messageText){
-     console.log('----------' +  messageText);
+     console.log(messageText);
      return res.send(messageText)
    }else{
      return res.status(400).send( "Could not find")
@@ -155,12 +148,13 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/index.html");
 });
 
-app.post("/message", saveMessage)
+app.post("/message", saveMessage) // 
 app.get("/all-message", getAllMessages) // getting all messages from the json file
 app.get("/message/:id", getMessageById)
 app.get("/latest", getLatestMessage) // found latest messages
-app.delete("/message/:id", deleteMessageById)
+app.delete("/message/:id", deleteMessageById) // DONE
 app.get("/search", getSearchFunc)
+app.put("/message/:id", updateMessage) // done
 
 
 app.listen(3007, () => {

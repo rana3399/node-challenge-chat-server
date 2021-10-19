@@ -5,10 +5,12 @@ function Main() {
     const [messages , setMessages] = useState([])
     const [nameInputValue , setNameInputValue] = useState('')
     const [messageInputValue , setMessageInputValue] = useState('')
-    const [messageContent, getMessageContent] = useState({
-		from: '',
-		text: '',
-	});
+    // const [messageContent,  setMessageContent] = useState({
+	// 	from: '',
+	// 	text: '',
+	// });
+    console.log(messages);
+
 
     useEffect(()=>{
         fetch("http://localhost:3007/all-message")
@@ -33,25 +35,36 @@ function Main() {
 
 
     const onSubmitHandler = (event) => {
+        event.preventDefault();
+        const url = "http://localhost:3007/message"
+        console.log(url);
 		event.preventDefault();
-		fetch("http://localhost:3007/message", {
+		fetch(url, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(messageContent),
+			body: JSON.stringify({
+                from: nameInputValue,
+                text: messageInputValue
+            }),
         
 		}).then(
-			fetch("http://localhost:3007/message")
+			fetch(url)
 				.then((res) => res.json())
 				.then((data) => {
-                    console.log(messageContent)
+                    //console.log(messageContent)
 					setMessages(data);
 				})
 		);
-		getMessageContent({ from: '', text: '' });
-        console.log(messageContent)
+        //console.log(messageContent)
+		//setMessageContent({ from: '', text: '' });
+
+        setNameInputValue('')
+        setMessageInputValue('')
+
+        
 	};
 
 
@@ -88,7 +101,7 @@ function Main() {
         <h1>CYF Chat</h1>
         <h2>Send a message</h2>
         
-        <form action="/messages" method="post">
+        <form onSubmit={onSubmitHandler}>
             <p>Name: 
                 <input 
                 onChange = {getNameValue}
@@ -107,11 +120,7 @@ function Main() {
                 /><br />
             </p>
         
-            <button 
-            type="submit"
-            onSubmit={onSubmitHandler}
-            >Send
-            </button>
+            <button type="submit">Send</button>
         </form>
 
             <button onClick={handleLatest} >Latest Messages </button>

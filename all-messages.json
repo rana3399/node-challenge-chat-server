@@ -1,12 +1,12 @@
 [
     {
-        "id": 0,
-        "from": "Bart",
-        "text": "Welcome to CYF !"
+        "id": 1,
+        "from": "Mark",
+        "text": "Bye, from Barcelona !"
     },
     {
-        "id": 888,
-        "from": "dcdccdcddpppp",
-        "text": " 888!"
+        "id": 2,
+        "from": "Diego",
+        "text": "hai "
     }
 ]
