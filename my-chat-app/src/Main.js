@@ -1,5 +1,6 @@
 import  {React, useEffect, useState} from 'react'
 
+
 function Main() {
 
     const [messages , setMessages] = useState([])
@@ -97,6 +98,7 @@ function Main() {
     console.log();
     
     return (
+    <>
     <div>
         <h1>CYF Chat</h1>
         <h2>Send a message</h2>
@@ -145,7 +147,9 @@ function Main() {
 
         
     </div>
+    </>
     )
+    
 }
 
 export default Main
