@@ -4,6 +4,7 @@ const fs = require("fs")
 const allMessagesFromJson = require("./all-messages.json");
 console.log(allMessagesFromJson);
 
+
 const app = express();
 
 app.use(cors());
@@ -156,7 +157,9 @@ app.delete("/message/:id", deleteMessageById) // DONE
 app.get("/search", getSearchFunc)
 app.put("/message/:id", updateMessage) // done
 
+const PORT = process.env.PORT || 3007;
 
-app.listen(3007, () => {
-   console.log("Listening on port 3007")
+
+app.listen(PORT, () => {
+   console.log(`Listening on port ${PORT}`)
   });
