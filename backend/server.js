@@ -2,24 +2,28 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs")
 const allMessagesFromJson = require("./all-messages.json");
+console.log(allMessagesFromJson);
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const globalMessagesFile = "./all-messages.json"
+const globalMessagesFile = "./all-messages.json";
+
+console.log("-----------" + globalMessagesFile);
 
 // ----------POST--------------
 
 const saveNewMessagesToJson = (jsonText)=>{
   const text = JSON.stringify(jsonText, null, 4)
-  fs.writeFileSync(globalMessagesFile, text)
+  fs.writeFileSync(globalMessagesFile, text);
 }
 
 const getNewMessagesFromJson =()=>{
-  const read = fs.readFileSync(globalMessagesFile)
-  const obj =  JSON.parse(read)
+  const read = fs.readFileSync(globalMessagesFile);
+  const obj =  JSON.parse(read);
+  console.log(obj);
   return obj;
 }
 
@@ -28,22 +32,18 @@ const messageContent = getNewMessagesFromJson();
 const saveMessage = (req, res )=>{
   const newMessage = req.body
 
-
-  let maxId = Math.max(...messageContent.map((message) => message.id))
-
-  let incrementId = maxId + 1
+  let maxId = Math.max(...messageContent.map((message) => message.id));
+  let incrementId = maxId + 1;
 
 
   const {id, from, text }  = newMessage;
-
-
   messageContent.push({
     id: incrementId,
     from: from,
     text: text
   })
   saveNewMessagesToJson(messageContent)
-  //console.log( messageContent);
+  console.log( messageContent);
   
   res.status(201).send({
     id: incrementId,
