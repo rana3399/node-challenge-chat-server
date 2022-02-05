@@ -1,13 +1,12 @@
 import  {React, useEffect, useState} from 'react'
 
-
 function Main() {
     const [messages , setMessages] = useState([]);
     const [nameInputValue , setNameInputValue] = useState('')
     const [messageInputValue , setMessageInputValue] = useState('')
 
     useEffect(()=>{
-        fetch("http://localhost:3007/all-message")
+        fetch(`http://localhost:3007/all-message`)
         .then((res) => res.json())
         .then((data) =>{ 
            // console.log(data);
@@ -86,13 +85,8 @@ function Main() {
     }
    
     return (
-<<<<<<< HEAD
     
     <div className="main-container">
-=======
-    <>
-    <div>
->>>>>>> 7b9134080615338fdc14299e749ba172c20b1823
         <h1>CYF Chat</h1>
         <h2>Send a message</h2>  
 
@@ -137,9 +131,7 @@ function Main() {
                 )
             })}        
     </div>
-    </>
     )
-    
 }
 
 export default Main
